@@ -18,8 +18,9 @@ def get_random_comic_number():
 
 def extract_extension(url):
     url_path = urlparse(url).path
-    return os.path.splitext(unquote(url_path, encoding='utf-8',
-                                    errors='replace'))[1]
+    return os.path.splitext(
+        unquote(url_path, encoding='utf-8',
+                errors='replace'))[1]
 
 
 def download_image(url, path):
@@ -36,17 +37,22 @@ def download_random_image(comics_id):
     decoded_response = response.json()
     extension = extract_extension(decoded_response['img'])
     message = decoded_response['alt']
-    filepath = Path(os.getcwd(), 'image',
-                    f'python_comics_{comics_id}{extension}')
+    filepath = Path(
+        os.getcwd(),
+        'image',
+        f'python_comics_{comics_id}{extension}'
+    )
     download_image(decoded_response['img'], filepath)
     return filepath, message
 
 
 def get_upload_server_url(group_id, token, api_version):
     api_url = 'https://api.vk.com/method/photos.getWallUploadServer'
-    params = {'group_id': group_id,
-              'access_token': token,
-              'v': api_version}
+    params = {
+        'group_id': group_id,
+        'access_token': token,
+        'v': api_version
+    }
     response = requests.get(api_url, params=params)
     response.raise_for_status()
     wall_upload_server_info = response.json()
@@ -63,29 +69,35 @@ def send_photo(url, filepath):
     save_params = response.json()
     return save_params['photo'], save_params['server'], save_params['hash']
 
+
 def save_photo(photo, server, hash, group_id, token, api_version):
     api_url = 'https://api.vk.com/method/photos.saveWallPhoto'
-    params = {'group_id': group_id,
-              'access_token': token,
-              'photo': photo,
-              'server': server,
-              'hash': hash,
-              'v': api_version}
+    params = {
+        'group_id': group_id,
+        'access_token': token,
+        'photo': photo,
+        'server': server,
+        'hash': hash,
+        'v': api_version
+    }
     response = requests.post(api_url, params=params)
     response.raise_for_status()
     post_params = response.json()
-    return post_params["response"][0]["owner_id"], post_params["response"][0]["id"]
+    return post_params["response"][0]["owner_id"],\
+        post_params["response"][0]["id"]
 
 
 def post_comics(owner_id, media_id, group_id, token, message, api_version):
     api_url = 'https://api.vk.com/method/wall.post'
     attachments = f'photo{owner_id}_{media_id}'
-    params = {'owner_id': f'-{group_id}',
-              'access_token': token,
-              'from_group': 1,
-              'attachments': attachments,
-              'message': message,
-              'v': api_version}
+    params = {
+        'owner_id': f'-{group_id}',
+        'access_token': token,
+        'from_group': 1,
+        'attachments': attachments,
+        'message': message,
+        'v': api_version
+    }
     response = requests.post(api_url, params=params)
     response.raise_for_status()
 
@@ -101,8 +113,12 @@ def main():
         comics_id = get_random_comic_number()
         filepath, message = download_random_image(comics_id)
         upload_server_url = get_upload_server_url(group_id, token, api_version)
-        photo_param, server_param, hash_param = send_photo(upload_server_url, filepath)
-        owner_id, media_id = save_photo(photo_param, server_param, hash_param, group_id, token, api_version)
+        photo_param, server_param, hash_param = send_photo(
+            upload_server_url, filepath
+        )
+        owner_id, media_id = save_photo(
+            photo_param, server_param, hash_param, group_id, token, api_version
+        )
         post_comics(owner_id, media_id, group_id, token, message, api_version)
     finally:
         shutil.rmtree(Path(os.getcwd(), 'image'))
