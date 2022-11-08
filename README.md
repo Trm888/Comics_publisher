@@ -11,8 +11,8 @@ pip install -r requirements.txt
 - Get a token from this link https://vk.com/dev/implicit_flow_user.
 -  Add the ".env" file to the project folder and enter the following data:
 ```
-GROUP_ID="id of your group in vk."
-ACCESS_TOKEN="Your token"
+VK_GROUP_ID="id of your group in vk."
+VK_TOKEN="Your token"
 
 ```
 -  script launch:

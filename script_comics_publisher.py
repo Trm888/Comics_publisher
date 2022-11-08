@@ -113,8 +113,8 @@ def main():
     comics_id = get_random_id()
     env = Env()
     env.read_env()
-    token = env.str("ACCESS_TOKEN")
-    group_id = env.str("GROUP_ID")
+    token = env.str("VK_TOKEN")
+    group_id = env.str("VK_GROUP_ID")
     api_version = 5.131
     post_comics(comics_id, group_id, token, api_version)
     remove_images()
