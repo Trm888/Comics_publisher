@@ -47,6 +47,7 @@ def get_upload_server_url(group_id, token, api_version):
               'access_token': token,
               'v': api_version}
     response = requests.get(api_url, params=params)
+    response.raise_for_status()
     wall_upload_server_info = response.json()
     return wall_upload_server_info['response']['upload_url']
 
