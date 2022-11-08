@@ -21,12 +21,6 @@ def extract_extension(url):
                                     errors='replace'))[1]
 
 
-def remove_images():
-    path = Path(os.getcwd(), 'image')
-    for image in os.listdir(path):
-        os.remove(Path(path, image))
-
-
 def download_image(url, path):
     response = requests.get(url)
     response.raise_for_status()
@@ -106,7 +100,7 @@ def main():
     params_from_save = send_photo(upload_server_url, filepath)
     params_upload_image = save_photo(params_from_save, group_id, token, api_version)
     post_comics(params_upload_image, group_id, token, message, api_version)
-    remove_images()
+    os.remove(filepath)
 
 
 if __name__ == '__main__':
