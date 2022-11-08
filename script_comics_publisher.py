@@ -60,25 +60,26 @@ def send_photo(url, filepath):
         }
         response = requests.post(url, files=files)
     response.raise_for_status()
-    return response.json()
+    save_params = response.json()
+    return save_params['photo'], save_params['server'], save_params['hash']
 
-def save_photo(params_from_save, group_id, token, api_version):
+def save_photo(photo, server, hash, group_id, token, api_version):
     api_url = 'https://api.vk.com/method/photos.saveWallPhoto'
     params = {'group_id': group_id,
               'access_token': token,
-              'photo': params_from_save['photo'],
-              'server': params_from_save['server'],
-              'hash': params_from_save['hash'],
+              'photo': photo,
+              'server': server,
+              'hash': hash,
               'v': api_version}
     response = requests.post(api_url, params=params)
     response.raise_for_status()
-    return response.json()
+    post_params = response.json()
+    return post_params["response"][0]["owner_id"], post_params["response"][0]["id"]
 
 
-def post_comics(params, group_id, token, message, api_version):
+def post_comics(owner_id, media_id, group_id, token, message, api_version):
     api_url = 'https://api.vk.com/method/wall.post'
-    attachments = f'photo{params["response"][0]["owner_id"]}_' \
-                  f'{params["response"][0]["id"]}'
+    attachments = f'photo{owner_id}_{media_id}'
     params = {'owner_id': f'-{group_id}',
               'access_token': token,
               'from_group': 1,
@@ -100,9 +101,9 @@ def main():
         comics_id = get_random_comic_number()
         filepath, message = download_random_image(comics_id)
         upload_server_url = get_upload_server_url(group_id, token, api_version)
-        params_from_save = send_photo(upload_server_url, filepath)
-        upload_image_params = save_photo(params_from_save, group_id, token, api_version)
-        post_comics(upload_image_params, group_id, token, message, api_version)
+        photo_param, server_param, hash_param = send_photo(upload_server_url, filepath)
+        owner_id, media_id = save_photo(photo_param, server_param, hash_param, group_id, token, api_version)
+        post_comics(owner_id, media_id, group_id, token, message, api_version)
     finally:
         shutil.rmtree(Path(os.getcwd(), 'image'))
 
