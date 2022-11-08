@@ -57,7 +57,7 @@ def send_photo(url, filepath):
             'photo': file,
         }
         response = requests.post(url, files=files)
-        response.raise_for_status()
+    response.raise_for_status()
     return response.json()
 
 def save_photo(params_from_save, group_id, token, api_version):
