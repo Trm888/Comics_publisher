@@ -8,7 +8,7 @@ import requests
 from environs import Env
 
 
-def get_random_number_comics():
+def get_random_number_comic():
     api_url = 'https://xkcd.com/info.0.json'
     response = requests.get(api_url)
     response.raise_for_status()
@@ -97,7 +97,7 @@ def main():
     api_version = 5.131
     Path(os.getcwd(), 'image').mkdir(parents=True, exist_ok=True)
     try:
-        comics_id = get_random_number_comics()
+        comics_id = get_random_number_comic()
         filepath, message = download_random_image(comics_id)
         upload_server_url = get_upload_server_url(group_id, token, api_version)
         params_from_save = send_photo(upload_server_url, filepath)
