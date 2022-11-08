@@ -1,5 +1,6 @@
 import os
 import random
+import shutil
 from pathlib import Path
 from urllib.parse import urlparse, unquote
 
@@ -95,13 +96,15 @@ def main():
     group_id = env.str("VK_GROUP_ID")
     api_version = 5.131
     Path(os.getcwd(), 'image').mkdir(parents=True, exist_ok=True)
-    comics_id = get_random_number_comics()
-    filepath, message = download_random_image(comics_id)
-    upload_server_url = get_upload_server_url(group_id, token, api_version)
-    params_from_save = send_photo(upload_server_url, filepath)
-    params_upload_image = save_photo(params_from_save, group_id, token, api_version)
-    post_comics(params_upload_image, group_id, token, message, api_version)
-    os.remove(filepath)
+    try:
+        comics_id = get_random_number_comics()
+        filepath, message = download_random_image(comics_id)
+        upload_server_url = get_upload_server_url(group_id, token, api_version)
+        params_from_save = send_photo(upload_server_url, filepath)
+        params_upload_image = save_photo(params_from_save, group_id, token, api_version)
+        post_comics(params_upload_image, group_id, token, message, api_version)
+    finally:
+        shutil.rmtree(Path(os.getcwd(), 'image'))
 
 
 if __name__ == '__main__':
