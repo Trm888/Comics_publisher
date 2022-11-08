@@ -8,7 +8,7 @@ import requests
 from environs import Env
 
 
-def get_random_number_comic():
+def get_random_comic_number():
     api_url = 'https://xkcd.com/info.0.json'
     response = requests.get(api_url)
     response.raise_for_status()
@@ -75,10 +75,10 @@ def save_photo(params_from_save, group_id, token, api_version):
     return response.json()
 
 
-def post_comics(params_upload_image, group_id, token, message, api_version):
+def post_comics(params, group_id, token, message, api_version):
     api_url = 'https://api.vk.com/method/wall.post'
-    attachments = f'photo{params_upload_image["response"][0]["owner_id"]}_' \
-                  f'{params_upload_image["response"][0]["id"]}'
+    attachments = f'photo{params["response"][0]["owner_id"]}_' \
+                  f'{params["response"][0]["id"]}'
     params = {'owner_id': f'-{group_id}',
               'access_token': token,
               'from_group': 1,
@@ -97,12 +97,12 @@ def main():
     api_version = 5.131
     Path(os.getcwd(), 'image').mkdir(parents=True, exist_ok=True)
     try:
-        comics_id = get_random_number_comic()
+        comics_id = get_random_comic_number()
         filepath, message = download_random_image(comics_id)
         upload_server_url = get_upload_server_url(group_id, token, api_version)
         params_from_save = send_photo(upload_server_url, filepath)
-        params_upload_image = save_photo(params_from_save, group_id, token, api_version)
-        post_comics(params_upload_image, group_id, token, message, api_version)
+        upload_image_params = save_photo(params_from_save, group_id, token, api_version)
+        post_comics(upload_image_params, group_id, token, message, api_version)
     finally:
         shutil.rmtree(Path(os.getcwd(), 'image'))
 
