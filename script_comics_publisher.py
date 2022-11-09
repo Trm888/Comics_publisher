@@ -55,8 +55,8 @@ def get_upload_server_url(group_id, token, api_version):
     }
     response = requests.get(api_url, params=params)
     response.raise_for_status()
-    wall_upload_server_info = response.json()
-    return wall_upload_server_info['response']['upload_url']
+    decoded_response = response.json()
+    return decoded_response['response']['upload_url']
 
 
 def send_photo(url, filepath):
@@ -66,8 +66,8 @@ def send_photo(url, filepath):
         }
         response = requests.post(url, files=files)
     response.raise_for_status()
-    save_params = response.json()
-    return save_params['photo'], save_params['server'], save_params['hash']
+    decoded_response = response.json()
+    return decoded_response['photo'], decoded_response['server'], decoded_response['hash']
 
 
 def save_photo(photo_param, server_param, hash_param, group_id, token, api_version):
@@ -82,9 +82,9 @@ def save_photo(photo_param, server_param, hash_param, group_id, token, api_versi
     }
     response = requests.post(api_url, params=params)
     response.raise_for_status()
-    post_params = response.json()
-    return post_params["response"][0]["owner_id"],\
-        post_params["response"][0]["id"]
+    decoded_response = response.json()
+    return decoded_response["response"][0]["owner_id"],\
+        decoded_response["response"][0]["id"]
 
 
 def post_comics(owner_id, media_id, group_id, token, message, api_version):
