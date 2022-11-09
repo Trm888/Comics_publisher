@@ -70,14 +70,14 @@ def send_photo(url, filepath):
     return save_params['photo'], save_params['server'], save_params['hash']
 
 
-def save_photo(photo, server, hash, group_id, token, api_version):
+def save_photo(photo_param, server_param, hash_param, group_id, token, api_version):
     api_url = 'https://api.vk.com/method/photos.saveWallPhoto'
     params = {
         'group_id': group_id,
         'access_token': token,
-        'photo': photo,
-        'server': server,
-        'hash': hash,
+        'photo': photo_param,
+        'server': server_param,
+        'hash': hash_param,
         'v': api_version
     }
     response = requests.post(api_url, params=params)
