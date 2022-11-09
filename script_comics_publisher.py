@@ -67,8 +67,10 @@ def send_photo(url, filepath):
         response = requests.post(url, files=files)
     response.raise_for_status()
     decoded_response = response.json()
-    return (decoded_response['photo'], decoded_response['server'],
-            decoded_response['hash'])
+    photo_param = decoded_response['photo']
+    server_param = decoded_response['server']
+    hash_param = decoded_response['hash']
+    return photo_param, server_param, hash_param
 
 
 def save_photo(
@@ -86,8 +88,9 @@ def save_photo(
     response = requests.post(api_url, params=params)
     response.raise_for_status()
     decoded_response = response.json()
-    return (decoded_response["response"][0]["owner_id"],
-            decoded_response["response"][0]["id"])
+    owner_id = decoded_response["response"][0]["owner_id"]
+    media_id = decoded_response["response"][0]["id"]
+    return owner_id, media_id
 
 
 def post_comics(owner_id, media_id, group_id, token, message, api_version):
